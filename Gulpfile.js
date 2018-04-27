@@ -101,11 +101,11 @@ gulp.task("webpack:optimized", function(callback) {
 
 gulp.task("css:optimized", function() {
   return gulp
-    .src("./docs/assets/css/*.css")
+    .src("./docs/*.css")
     .pipe(plumber())
     .pipe(autoprefixer())
     .pipe(cssnano({ discardComments: { removeAll: true } }))
-    .pipe(gulp.dest("docs/assets/css/"));
+    .pipe(gulp.dest("docs/"));
 });
 
 gulp.task("images", function() {
@@ -117,7 +117,7 @@ gulp.task("images", function() {
         progressive: true
       })
     )
-    .pipe(gulp.dest("./docs/assets/img"));
+    .pipe(gulp.dest("./docs/img"));
 });
 
 gulp.task("images:optimized", function() {
@@ -130,7 +130,7 @@ gulp.task("images:optimized", function() {
         multipass: true
       })
     )
-    .pipe(gulp.dest("./docs/assets/img"));
+    .pipe(gulp.dest("./docs/img"));
 });
 
 gulp.task("fonts", function() {

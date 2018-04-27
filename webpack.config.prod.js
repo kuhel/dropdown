@@ -16,14 +16,14 @@ module.exports = {
   output: {
     path: __dirname + "/docs", // Note: Physical files are only output by the production build task `npm run build`.
     publicPath: "/",
-    filename: "assets/js/bundle.js"
+    filename: "bundle.js"
   },
   plugins: [
     new WebpackMd5Hash(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin(GLOBALS),
-    new ExtractTextPlugin("assets/css/main.css"),
+    new ExtractTextPlugin("main.css"),
     new Visualizer(),
     new webpack.ContextReplacementPlugin(
       /highlight\.js\/lib\/languages$/,
