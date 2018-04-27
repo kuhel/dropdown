@@ -1,6 +1,7 @@
 import styles from './assets/css/main.scss';
 import polyfills from './assets/js/polyfills';
 import DropdownController from './assets/js/Dropdown-Controller';
+import data from './assets/js/data';
 
 const nodes = document.querySelectorAll('.vk-dropdown');
 
@@ -15,3 +16,5 @@ third.init();
 
 const fourth = new DropdownController(nodes[3], { fetchFromServer: true });
 fourth.init();
+
+document.getElementById('users').innerHTML = data.map(user => `<li class="user"><strong>${user.name}</strong> — ${user.domain}</li>`).join('\n');

@@ -221,3 +221,12 @@
         line-height: 33px;
     }
 }
+
+#users {
+    padding: 0;
+    list-style: none;
+    .user,
+    li {
+        margin-bottom: 10px;
+    }
+}
