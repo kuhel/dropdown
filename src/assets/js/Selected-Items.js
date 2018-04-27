@@ -81,7 +81,6 @@ export default class SelectedItems {
 	 */
 	_clickHandler(e) {
 		const target = e.target.closest('button');
-		console.dir(target.dataset.id);
 		this.clickCb(target.dataset.id);
 	}
 

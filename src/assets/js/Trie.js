@@ -19,6 +19,13 @@ export default class Trie {
 		this.getUsers = this.getUsers.bind(this);
 	}
 
+	/**
+	 * Create tree structure from value
+	 * 
+	 * @param {Object} user user object
+	 * @param {String} queryString string to parse
+	 * @param {Object} options is query translit or switched
+	 */
 	createNodes(
 		user,
 		queryString,
@@ -45,6 +52,10 @@ export default class Trie {
 		}
 	}
 
+	/**
+	 * Init
+	 * 
+	 */
 	init() {
 		this.data.forEach(user => {
 			user.name.split(' ').forEach(string => {
@@ -53,6 +64,12 @@ export default class Trie {
 		});
 	}
 
+	/**
+	 * Get Node values
+	 * 
+	 * @param {Node} node 
+	 * @returns {Array}
+	 */
 	getNodeids(node) {
 		const ids = [];
 		const currentNode = [node];
@@ -75,6 +92,12 @@ export default class Trie {
 		return ids;
 	}
 
+	/**
+	 * Handler for getting ids
+	 * 
+	 * @param {String} query string to search
+	 * @returns 
+	 */
 	getUserIds(query) {
 		const wordArray = trimString(query).split(' ');
 
@@ -86,6 +109,12 @@ export default class Trie {
 		return this.getUsers(wordArray[0]);
 	}
 
+	/**
+	 * Search for Ids
+	 * 
+	 * @param {String} query string to search
+	 * @returns {Array}
+	 */
 	getUsers(query) {
 		let _tree = this.tree;
 		const userIds = [];
@@ -107,6 +136,12 @@ export default class Trie {
 		return userIds;
 	}
 
+	/**
+	 * Launch node init with different use cases
+	 * 
+	 * @param {Object} user 
+	 * @param {String} string 
+	 */
 	useCases(user, string) {
 		this.createNodes(user, string);
 		this.createNodes(user, user.domain);
@@ -115,6 +150,17 @@ export default class Trie {
 		this.createNodes(user, string, { switched: true, translit: true });
 	}
 
+	/**
+	 * Put user ids to nodes end
+	 * 
+	 * @param {String} char character
+	 * @param {Num} charIndex char number
+	 * @param {String} string current state of parsed string
+	 * @param {Tree} tree trie itself
+	 * @param {String} id user id
+	 * @returns 
+	 * @memberof Trie
+	 */
 	setIds(char, charIndex, string, tree, id) {
 		if (charIndex === string.length - 1) {
 			if (!tree[char]) {

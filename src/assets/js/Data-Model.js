@@ -21,11 +21,6 @@ export default class DataModel {
 	}
 
 	compareDataState(users, selected) {
-		const res = users.filter(item => selected.indexOf(item) < 0);
-		console.log('res: ', res);
-		console.log('users: ', users);
-		console.log('selected: ', selected);
-		return res;
-		// return users.filter(item => selected.indexOf(item) < 0);
+		return users.filter(item => selected.indexOf(item) < 0);;
 	}
 }
