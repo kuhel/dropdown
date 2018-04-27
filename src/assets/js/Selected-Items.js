@@ -1,29 +1,49 @@
+/**
+ * Selected items class
+ * 
+ * @export
+ * @class SelectedItems
+ */
 export default class SelectedItems {
+    /**
+     * Creates an instance of SelectedItems.
+     * @param {HTMLElement} container dropdown container
+     * @param {Function} itemClickCallback user button click callback
+     * @param {Function} addCallBack add button click callback
+     * @param {Function} getUser get user info
+     * @param {any} config config actually
+     */
     constructor(container, itemClickCallback = () => null, addCallBack = () => null, getUser = () => null, config) {
         this._data = [];
         this.clickCb = itemClickCallback;
         this.addCb = addCallBack;
         this.getUser = getUser;
         this.config = {
-            classNames: {
-                containerClass: 'vk-dropdown-selected-persons'
-            },
-            isMulti: config.isMulti
+            ...config
         };
-        this.container =  container.querySelector('.' + this.config.classNames.containerClass);;
+        this.container =  container.querySelector('.' + this.config.classNames.selectContainerClass);
     }
 
+    /**
+     * Data getter
+     */
     get data() {
         return this._data;
     }
 
+    /**
+     * Data Setter
+     */
     set data(data) {
         this._data = [...data];
     } 
 
+    /**
+     * Renders selected items input
+     */
     render() {
         if (this._data.length) {
-            this.container.querySelector('.' + this.config.classNames.containerClass);
+            this.container.querySelector('.' + this.config.classNames.selectContainerClass);
             this.container.addEventListener('click', (e) => this._onClick(e));
             this._data.forEach((item, i) => {
                 const node = this._createPersonBtn(item);
@@ -35,16 +55,32 @@ export default class SelectedItems {
         }
     }
 
+    /**
+     * Add button click handler
+     * 
+     * @param {Event} e event 
+     */
     _clickAddHandler(e) {
         this.addCb();
     }
 
-    _clickHandler(item) {
-        const target = item.target.closest('button');
+    /**
+     * User button click handler
+     * 
+     * @param {Event} e event 
+     */
+    _clickHandler(e) {
+        const target = e.target.closest('button');
         console.dir(target.dataset.id);
         this.clickCb(target.dataset.id);
     }
 
+    /**
+     * Creates element for user button
+     * 
+     * @param {String} userId 
+     * @returns {HTMLElement}
+     */
     _createPersonBtn(userId) {
         const el = document.createElement('button');
         const user = this.getUser(userId);
@@ -55,6 +91,11 @@ export default class SelectedItems {
         return el;
     }
 
+    /**
+     * Creates element for add button
+     * 
+     * @returns {HTMLElement}
+     */
     _createAddBtn() {
         const el = document.createElement('button');
         el.classList.add('input-btn', 'input-btn--add');
@@ -63,6 +104,11 @@ export default class SelectedItems {
         return el;
     }
 
+    /**
+     * Click resolve
+     * 
+     * @param {Event} e Event
+     */
     _onClick(e) {
         e.stopPropagation();
        const target = e.target;

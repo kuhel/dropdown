@@ -25,9 +25,10 @@ export default class DropdownController {
         this.defaultConfig = {
             classNames: {
                 selectedItemsContainerClass: 'vk-dropdown-selected-persons',
-                usersListContainer: 'user-list__content',
-                userItemContainer: 'user-list__item',
-                userImageContainerClass: 'user-item__image-container'
+                usersListContainerClass: 'user-list__content',
+                userItemContainerClass: 'user-list__item',
+                userImageContainerClass: 'user-item__image-container',
+                selectContainerClass: 'vk-dropdown-selected-persons'
             },
             isMulti: true,
             showAvatars: true,
