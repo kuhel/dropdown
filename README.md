@@ -24,9 +24,9 @@ VK Dropdown
 
 Собрать
 
-### `npm run build`
+`npm run build`
 
 Режим разработки
 
-### `npm run start`
+`npm run start`
 
