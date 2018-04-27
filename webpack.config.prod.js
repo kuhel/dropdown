@@ -19,16 +19,16 @@ module.exports = {
     filename: "bundle.js"
   },
   plugins: [
-    new WebpackMd5Hash(),
+    // new WebpackMd5Hash(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.DefinePlugin(GLOBALS),
+    // new webpack.DefinePlugin(GLOBALS),
     new ExtractTextPlugin("main.css"),
-    new Visualizer(),
-    new webpack.ContextReplacementPlugin(
-      /highlight\.js\/lib\/languages$/,
-      new RegExp(`^./(${["javascript", "css", "bash"].join("|")})$`)
-    ),
+    // new Visualizer(),
+    // new webpack.ContextReplacementPlugin(
+    //   /highlight\.js\/lib\/languages$/,
+    //   new RegExp(`^./(${["javascript", "css", "bash"].join("|")})$`)
+    // ),
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false,
