@@ -1,0 +1,223 @@
+@import '/1-base/_vars.scss';
+@import '/1-base/_base.scss';
+
+// INPUT BUTTONS
+.input-btn {
+    padding: 0;
+    margin: 1px 2px 2px 1px;
+    border: 0;
+    padding: 5px 7px 4px;
+    border-radius: 2px;
+    background: #dae2ea;
+    font-size: 12.5px;
+    color: #55677d;
+    cursor: pointer;
+
+    &::after {
+        content: '';
+        display: block;
+        float: right;
+        margin-top: 1px;
+        margin-left: 6px;
+        width: 12px;
+        height: 12px;
+        background-image: url('https://vk.com/images/icons/common.png');
+        background-repeat: no-repeat;
+        background-size: 32px 232px;
+        opacity: 0.45;
+        transition: opacity 200ms linear;
+    }
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (   min--moz-device-pixel-ratio: 2),
+    only screen and (     -o-min-device-pixel-ratio: 2/1),
+    only screen and (        min-device-pixel-ratio: 2),
+    only screen and (                min-resolution: 192dpi),
+    only screen and (                min-resolution: 2dppx) {
+        &::after {
+            background-image: url('https://vk.com/images/icons/common_2x.png');
+        }
+    }
+
+    &:hover {
+        &::after {
+            opacity: 1;
+        }
+    }
+
+    &--add {
+        display: inline-block;
+        &::after {
+            background-position: 0 0;
+        }
+        nobr {
+            color: #55677d;
+        }
+    }
+
+    &--person {
+        display: inline-block;
+        margin: 1px 2px 2px 1px;
+        color: #f0f2f5;
+        background: #5181b8;
+        &::after {
+            background-position: 1px -160px;
+        }
+    }
+}
+
+.btn-dropdown {
+    width: 21px;
+    height: 25px;
+    float: right;
+    border: none;
+    background-color: #fff;
+    background-image: url('https://vk.com//images/dropdown_arrow.png');
+    background-size: 11px 7px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    overflow: hidden;
+    cursor: pointer;
+
+    @media
+    only screen and (-webkit-min-device-pixel-ratio: 2),
+    only screen and (   min--moz-device-pixel-ratio: 2),
+    only screen and (     -o-min-device-pixel-ratio: 2/1),
+    only screen and (        min-device-pixel-ratio: 2),
+    only screen and (                min-resolution: 192dpi),
+    only screen and (                min-resolution: 2dppx) {
+        background-image: url('https://vk.com//images/dropdown_arrow_2x.png');
+    }
+
+    span {
+        font-size: 0;
+        display: none;
+    }
+}
+
+.vk-dropdown {
+    position: relative;
+    padding: 2px 2px 1px;
+    width: 380px;
+    border: 1px solid #d3d9de;
+    border-radius: 2px;
+    background: #fff;
+    overflow: visible;
+    transition: border-radius .24s ease;
+
+    &--focused {
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+
+        .user-list {
+            display: initial;
+        }
+    }
+
+    [type="text"] {
+        display: block;
+        padding: 4px 0 7px 6px;
+        margin: 0px;
+        float: left;
+        width: 348px;
+        height: 14px;
+        outline: 0px;
+        border: 0px;
+        font-size: 13px;
+        box-shadow: none;
+        color: rgb(119, 119, 119);
+    }
+}
+
+.vk-dropdown-selected-persons {
+    display: block;
+    float: left;
+    width: 359px; // Opera 10 Fallback
+    width: calc(100% - 31px);
+    font-size: 0;
+}
+
+
+.user-list {
+    display: none;
+    font-size: 0;
+    z-index: 999;
+
+    &__content,
+    &__empty-result {
+        position: absolute;
+        padding: 0;
+        margin-left: -1px;
+        margin-right: -1px;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        max-height: 240px;
+        border: 1px solid #d3d9de;
+        border-top: none;
+        overflow: auto;
+        z-index: 999;
+    }
+
+    &__item {
+        padding: 8px 12px;
+        min-height: 50px;
+        box-sizing: border-box;
+        border-top: 1px solid #d3d9de;
+        background-color: #fff;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #f0f2f5;
+        }
+        :first-child {
+            border-top: none;
+        }
+    }
+
+    &__empty-result {
+        padding: 17px 12px;
+        font-family: -apple-system, BlinkMacSystemFont, Roboto, Open Sans, Helvetica Neue, sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.25;
+        background-color: #f0f2f5;
+    }
+}
+
+.user-item {
+    cursor: pointer;
+    &__image-container {
+        float: left;
+        margin-right: 10px;
+        width: 34px;
+        height: 34px;
+        overflow: hidden;
+
+        img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            vertical-align: top;
+        }
+    }
+    &__name {
+        margin-bottom: 2px;
+        font-size: 12.5px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: #42648b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+    }
+
+    &--not-found {
+        font-size: 12px;
+        line-height: 33px;
+    }
+}
