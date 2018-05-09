@@ -1,3 +1,4 @@
+@import '/0-tools/spinner.scss';
 @import '/1-base/_vars.scss';
 @import '/1-base/_base.scss';
 
@@ -163,6 +164,7 @@
     }
 
     &__item {
+        position: relative;
         padding: 8px 12px;
         min-height: 50px;
         box-sizing: border-box;

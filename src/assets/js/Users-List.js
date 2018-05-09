@@ -22,6 +22,7 @@ export default class UsersList {
 		this.clickCb = itemClickCallback;
 		this.getUserById = getUser;
 		this.IMAGE_LOAD_TIMEOUT = 4000;
+		this.container = null;
 		this.config = {
 			...config
 		};
@@ -31,25 +32,39 @@ export default class UsersList {
 	 * Renders users list
 	 *
 	 * @param {Array} data array of user ids
+	 * @param {String} content string with markup
 	 * @returns {HTMLElement}
 	 */
-	render(data) {
+	render(data, content = null) {
 		const doc = document.createDocumentFragment();
-		const container = document.createElement('ul');
-		container.classList.add(this.config.classNames.usersListContainerClass);
-		container.addEventListener('click', e => {
+		this.container = document.createElement('ul');
+		this.container.classList.add(this.config.classNames.usersListContainerClass);
+		this.container.addEventListener('click', e => {
 			this._clickHandler(e);
 		});
+		if (content !== null) {
+			this.container.appendChild(this.createLoadingNode());
+		} else {
+			this.renderData(data);
+		}
+		doc.appendChild(this.container);
+		return doc;
+	}
+
+	/**
+	 * Renderes data to li
+	 * 
+	 * @param {Array} data user data
+	 */
+	renderData(data) {
 		if (data.length) {
 			data.forEach((item, i) => {
-				const node = this._createPersonNode(item, i);
-				container.appendChild(node);
+				const node = this.createPersonNode(item, i);
+				this.container.appendChild(node);
 			});
 		} else {
-			container.appendChild(this._createNotFoundNode());
+			this.container.appendChild(this.createNotFoundNode());
 		}
-		doc.appendChild(container);
-		return doc;
 	}
 
 	/**
@@ -62,7 +77,23 @@ export default class UsersList {
 		const target = event.target.closest(
 			'.' + this.config.classNames.userItemContainerClass
 		);
-		this.clickCb(target.dataset.id);
+		if (target.dataset.hasOwnProperty(id)) {
+			this.clickCb(target.dataset.id);
+		}
+	}
+
+	/**
+	 * Creates generic element
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createItemNode() {
+		const el = document.createElement('li');
+		el.classList.add(
+			this.config.classNames.userItemContainerClass,
+			'clearfix'
+		);
+		return el;
 	}
 
 	/**
@@ -72,23 +103,19 @@ export default class UsersList {
 	 * @param {Number} num number of person in data array
 	 * @returns {HTMLElement}
 	 */
-	_createPersonNode(userId, num) {
-		const el = document.createElement('li');
+	createPersonNode(userId, num) {
+		const el = this.createItemNode();
 		const user = this.getUserById(userId);
-		el.classList.add(
-			this.config.classNames.userItemContainerClass,
-			'clearfix'
-		);
 		el.setAttribute('tabindex', num + 1);
 		el.setAttribute('data-id', user.id);
-		el.innerHTML = this._renderPerson(user);
+		el.innerHTML = this.renderPerson(user);
 
 		if (this.config.showAvatars) {
 			el
 				.querySelector(
 					'.' + this.config.classNames.userImageContainerClass
 				)
-				.appendChild(this._renderPersonImage(user.pic));
+				.appendChild(this.renderPersonImage(user.pic));
 		}
 		return el;
 	}
@@ -98,15 +125,38 @@ export default class UsersList {
 	 *
 	 * @returns {HTMLElement}
 	 */
-	_createNotFoundNode() {
-		const el = document.createElement('li');
-		el.classList.add(
-			this.config.classNames.userItemContainerClass,
-			'clearfix'
-		);
+	createNotFoundNode() {
+		const el = this.createItemNode();
 		el.setAttribute('tabindex', 1);
-		el.innerHTML = this._renderNotFound();
+		el.innerHTML = this.renderNotFound();
 		return el;
+	}
+
+	/**
+	 * Renders item for loading
+	 *
+	 * @returns {HTMLElement}
+	 */
+	createLoadingNode() {
+		const el = this.createItemNode();
+		el.setAttribute('tabindex', 1);
+		el.innerHTML = this.renderLoading();
+		return el;
+	}
+
+	/**
+	 * Markup for loading
+	 *
+	 * @returns {String}
+	 * @memberof UsersList
+	 */
+	renderLoading() {
+		return `
+			<div class="spinner">
+				<span></span>
+				<span></span>
+				<span></span>
+			</div>`;
 	}
 
 	/**
@@ -115,11 +165,11 @@ export default class UsersList {
 	 * @returns {String}
 	 * @memberof UsersList
 	 */
-	_renderNotFound() {
+	renderNotFound() {
 		return `
-            <div class="user-item user-item--not-found">
-                <span class="user-item__info">Пользователь с таким именем не найден</span>
-            </div>`;
+			<div class="user-item user-item--not-found">
+				<span class="user-item__info">Пользователь с таким именем не найден</span>
+			</div>`;
 	}
 
 	/**
@@ -128,18 +178,18 @@ export default class UsersList {
 	 * @param {Object} user Data about user with keys "id", "name" ,"pic", "domain"
 	 * @returns {String} Markup of element
 	 */
-	_renderPerson(user) {
+	renderPerson(user) {
 		return `
-            <div class="user-item">
-                ${
+			<div class="user-item">
+				${
 					this.config.showAvatars
 						? '<div class="user-item__image-container"></div>'
 						: ''
 				}
-                <div class="user-item__info">
-                    <span class="user-item__name">${user.name}</span>
-                </div>
-            </div>`;
+				<div class="user-item__info">
+					<span class="user-item__name">${user.name}</span>
+				</div>
+			</div>`;
 	}
 
 	/**
@@ -148,7 +198,7 @@ export default class UsersList {
 	 * @param {String} pic Image URL
 	 * @returns {HTMLImageElement}
 	 */
-	_renderPersonImage(pic) {
+	renderPersonImage(pic) {
 		const img = new Image();
 		let loadErrorTimeout;
 

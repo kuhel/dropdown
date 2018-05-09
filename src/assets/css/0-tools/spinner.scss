@@ -1,0 +1,38 @@
+.spinner {
+    position: absolute;
+    left: 12px;
+    top: 21px;
+    width: 26px;
+    height: 8px;
+    box-sizing: border-box;
+    display: block;
+    font-size: 0;
+    color: #5181b8;
+
+    span {
+        display: inline-block;
+        width: 4px;
+        height: 4px;
+        margin: 2px;
+        float: none;
+        background-color: currentColor;
+        border: 0 solid currentColor;
+        border-radius: 100%;
+        animation: beat .7s -.15s infinite linear;
+
+        &:nth-child(2n-1) {
+            animation-delay: -.5s;
+        }
+    }
+}
+
+@keyframes beat {
+    50% {
+        opacity: .2;
+        transform: scale(.75);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

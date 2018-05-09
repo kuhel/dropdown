@@ -67,10 +67,8 @@ export default class SelectedItems {
 
 	/**
 	 * Add button click handler
-	 *
-	 * @param {Event} e event
 	 */
-	_clickAddHandler(e) {
+	_clickAddHandler() {
 		this.addCb();
 	}
 

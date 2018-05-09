@@ -38,6 +38,8 @@ export default class DropdownController {
 			...this.defaultConfig,
 			...config
 		};
+
+		this.onBlur = this.onBlur.bind(this);
 	}
 
 	/**
@@ -81,9 +83,12 @@ export default class DropdownController {
 			this._onFocus(e);
 		});
 
+		this.textInput.addEventListener('blur', this.onBlur);
+
 		this.textInput.addEventListener('input', e => {
 			this._onChange(e);
 		});
+
 
 		document.body.addEventListener('click', e => {
 			e.stopPropagation();
@@ -109,6 +114,13 @@ export default class DropdownController {
 		this.usersListElement.innerHTML = '';
 		this.usersListElement.appendChild(
 			this.usersList.render(this.dataModel.state.list)
+		);
+	}
+
+	showSpinner() {
+		this.usersListElement.innerHTML = '';
+		this.usersListElement.appendChild(
+			this.usersList.render(null, 'loading')
 		);
 	}
 
@@ -167,6 +179,7 @@ export default class DropdownController {
 		const value = e.target.value;
 		if (value.length > 0) {
 			if (this.config.fetchFromServer) {
+				this.showSpinner(true);
 				this.fetchData(value)
 					.then(res => {
 						this._setUserListData(
@@ -179,6 +192,7 @@ export default class DropdownController {
 						return res;
 					})
 					.catch(err => console.dir(err));
+				this.showSpinner(false);	
 			} else {
 				this.sortData(value.toLowerCase());
 				this.renderUsersList();
@@ -191,6 +205,16 @@ export default class DropdownController {
 				)
 			);
 			this.renderUsersList();
+		}
+	}
+
+	/**
+	 * Blur event handler
+	 * @param {Event} e 
+	 */
+	onBlur(e) {
+		if (this._usersListShown() && !this.usersList.container.contains(e.relatedTarget)) {
+			this.hideUserList();
 		}
 	}
 
@@ -271,7 +295,7 @@ export default class DropdownController {
 		return new Promise((resolve, reject) => {
 			setTimeout(
 				() => resolve(this.trie.getUserIds(value)),
-				Math.random() * 100
+				Math.random() * 500
 			);
 		});
 	}
