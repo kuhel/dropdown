@@ -172,7 +172,7 @@
         background-color: #fff;
         cursor: pointer;
 
-        &:hover {
+        &.active {
             background-color: #f0f2f5;
         }
         :first-child {

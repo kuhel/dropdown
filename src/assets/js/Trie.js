@@ -8,11 +8,11 @@ import DICT from './Dictionary';
  * @class Trie
  */
 export default class Trie {
- /**
-  * Creates an instance of Trie.
-  * @param {Array} data user data
-  */
- constructor(data) {
+	/**
+	 * Creates an instance of Trie.
+	 * @param {Array} data user data
+	 */
+	constructor(data) {
 		this.data = data;
 		this.tree = {};
 		this.getUserIds = this.getUserIds.bind(this);
@@ -34,21 +34,21 @@ export default class Trie {
 			switched: false
 		}
 	) {
-		let _tree = this.tree;
-		let _string = queryString.toLowerCase();
+		let treeTemp = this.tree;
+		let stringTemp = queryString.toLowerCase();
 
-		if (options.translit && DICT.ABC.RU.indexOf(_string.charAt(0)) > -1) {
-			_string = convertToTranslit(_string);
+		if (options.translit && DICT.ABC.RU.indexOf(stringTemp.charAt(0)) > -1) {
+			stringTemp = convertToTranslit(stringTemp);
 		}
 
-		for (let charIndex = 0; charIndex < _string.length; charIndex++) {
-			let char = _string.charAt(charIndex);
+		for (let charIndex = 0; charIndex < stringTemp.length; charIndex++) {
+			let char = stringTemp.charAt(charIndex);
 
 			if (options.switched) {
 				char = switchKeyboard(char);
 			}
 
-			_tree = this.setIds(char, charIndex, _string, _tree, user.id);
+			treeTemp = this.setIds(char, charIndex, stringTemp, treeTemp, user.id);
 		}
 	}
 
@@ -84,8 +84,7 @@ export default class Trie {
 			}
 
 			Object.keys(childNode).forEach(
-				item =>
-					item !== 'ids' ? currentNode.push(childNode[item]) : null
+				item => { return item !== 'ids' ? currentNode.push(childNode[item]) : null; }
 			);
 		}
 
@@ -116,16 +115,16 @@ export default class Trie {
 	 * @returns {Array}
 	 */
 	getUsers(query) {
-		let _tree = this.tree;
+		let treeTemp = this.tree;
 		const userIds = [];
 
 		query.split('').forEach((item, i) => {
-			if (_tree[item]) {
-				_tree = _tree[item];
+			if (treeTemp[item]) {
+				treeTemp = treeTemp[item];
 				if (i === query.length - 1) {
 					userIds.push.apply(
 						userIds,
-						this.getNodeids(_tree).filter(
+						this.getNodeids(treeTemp).filter(
 							id => userIds.indexOf(id) < 0
 						)
 					);

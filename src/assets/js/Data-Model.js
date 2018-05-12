@@ -1,7 +1,7 @@
 export default class DataModel {
 	constructor(initialData) {
 		this.initialData = initialData;
-		this._data = [];
+		this.innerData = [];
 		this.state = {
 			list: [],
 			selected: []
@@ -9,11 +9,11 @@ export default class DataModel {
 	}
 
 	get data() {
-		return [...this._data];
+		return [...this.innerData];
 	}
 
 	set data(newData) {
-		this._data = [...newData];
+		this.innerData = [...newData];
 	}
 
 	getUserById(id) {

@@ -18,6 +18,7 @@ export default class DropdownController {
 		this.usersListElement = this.element.querySelector('.user-list');
 		this.btn = this.element.querySelector('.btn-dropdown');
 		this.textInput = this.element.querySelector('.vk-dropdown-text-input');
+		this.activeListItemIndex = null;
 		this.usersList = null;
 		this.selectedItems = null;
 		this.dataModel = null;
@@ -39,7 +40,13 @@ export default class DropdownController {
 			...config
 		};
 
-		this.onBlur = this.onBlur.bind(this);
+		this._onBlur = this._onBlur.bind(this);
+		this._onChange = this._onChange.bind(this);
+		this._onDropdownClick = this._onDropdownClick.bind(this);
+		this._onFocus = this._onFocus.bind(this);
+		this._onKeyDown = this._onKeyDown.bind(this);
+		this._onMouseOver = this._onMouseOver.bind(this);
+		this._onOutsideClick = this._onOutsideClick.bind(this);
 	}
 
 	/**
@@ -53,7 +60,6 @@ export default class DropdownController {
 			.map(item => item.id);
 		this.dataModel.state.list = [...this.dataModel.data].sort();
 		this.usersList = new UsersList(
-			this.dataModel.data,
 			id => this._onItemSelect(id),
 			id => this.dataModel.getUserById(id),
 			this.config
@@ -72,30 +78,49 @@ export default class DropdownController {
 	}
 
 	/**
+	 * Destroy
+	 */
+	destroy() {
+		this.usersList.container.innerHTML = '';
+		this.removeEventListeners();
+	}
+
+	/**
 	 * Start event listeners
 	 */
 	initEventListeners() {
-		this.btn.addEventListener('click', () => {
-			this._onDropdownClick();
-		});
+		this.btn.addEventListener('click', this._onDropdownClick);
 
-		this.textInput.addEventListener('focus', e => {
-			this._onFocus(e);
-		});
+		this.textInput.addEventListener('focus', this._onFocus);
 
-		this.textInput.addEventListener('blur', this.onBlur);
+		this.textInput.addEventListener('blur', this._onBlur);
 
-		this.textInput.addEventListener('input', e => {
-			this._onChange(e);
-		});
+		this.textInput.addEventListener('input', this._onChange);
 
+		this.element.addEventListener('keydown', this._onKeyDown);
 
-		document.body.addEventListener('click', e => {
-			e.stopPropagation();
-			if (this._usersListShown() && !this.element.contains(e.target)) {
-				this.hideUserList();
-			}
-		});
+		this.usersListElement.addEventListener('mouseover', this._onMouseOver);
+
+		document.body.addEventListener('click', this._onOutsideClick);
+	}
+
+	/**
+	 * Destrou event listeners
+	 */
+	removeEventListeners() {
+		this.btn.removeEventListener('click', this._onDropdownClick);
+
+		this.textInput.removeEventListener('focus', this._onFocus);
+
+		this.textInput.removeEventListener('blur', this._onBlur);
+
+		this.textInput.removeEventListener('input', this._onChange);
+
+		this.element.removeEventListener('keydown', this._onKeyDown);
+
+		this.usersListElement.removeEventListener('mouseover', this._onMouseOver);
+
+		document.body.removeEventListener('click', this._onOutsideClick);
 	}
 
 	/**
@@ -133,6 +158,8 @@ export default class DropdownController {
 		if (this.textInput !== document.activeElement) {
 			this.textInput.focus();
 		}
+		this.activeListItemIndex = 1;
+		this.setActiveItem(this.usersList.container.childNodes[0]);
 	}
 
 	/**
@@ -164,7 +191,7 @@ export default class DropdownController {
 	 */
 	_onFocus(e) {
 		if (this.element.contains(e.target)) {
-			if (!this._usersListShown()) {
+			if (!this.usersListShown()) {
 				this.showUserList();
 			}
 		}
@@ -192,7 +219,7 @@ export default class DropdownController {
 						return res;
 					})
 					.catch(err => console.dir(err));
-				this.showSpinner(false);	
+				this.showSpinner(false);
 			} else {
 				this.sortData(value.toLowerCase());
 				this.renderUsersList();
@@ -210,19 +237,33 @@ export default class DropdownController {
 
 	/**
 	 * Blur event handler
+	 * 
 	 * @param {Event} e 
 	 */
-	onBlur(e) {
-		if (this._usersListShown() && !this.usersList.container.contains(e.relatedTarget)) {
+	_onBlur(e) {
+		if (this.usersListShown() && !this.usersList.container.contains(e.relatedTarget)) {
+			this.hideUserList();
+		}
+	}
+
+	/**
+	 * Outside click handler
+	 * 
+	 * @param {Event} e 
+	 */
+	_onOutsideClick(e) {
+		e.stopPropagation();
+		if (this.usersListShown() && !this.element.contains(e.target)) {
 			this.hideUserList();
 		}
 	}
 
 	/**
 	 * Dropdown click button handler
+	 * 
 	 */
 	_onDropdownClick() {
-		if (this._usersListShown()) {
+		if (this.usersListShown()) {
 			this.hideUserList();
 		} else {
 			this.showUserList();
@@ -266,6 +307,114 @@ export default class DropdownController {
 	}
 
 	/**
+	 * Key press handler
+	 * 
+	 * @param {Event} e 
+	 */
+	_onKeyDown(e) {
+		// 13: Enter, 38: Up, 40: down
+		if (this.usersListShown()) {
+			const dir = e.keyCode === 40;
+			console.log('Key: ', this.activeListItemIndex);
+			const items = this.usersList.container.childNodes;
+			switch (e.keyCode) {
+				case 27:
+					this.hideUserList();
+					break;
+				case 40:
+					if (this.activeListItemIndex < items.length) {
+						this.activeListItemIndex++;
+					}
+					this.arrowKeyActions(dir, items[this.activeListItemIndex - 1]);
+					break;
+				case 38:
+					if (this.activeListItemIndex > 1) {
+						this.activeListItemIndex--;
+					}
+					this.arrowKeyActions(dir, items[this.activeListItemIndex - 1]);
+					break;
+				case 13:
+					const item = items[this.activeListItemIndex - 1];
+					if (item) {
+						this._onItemSelect(item.dataset.id);
+						this.hideUserList();
+					}
+				default:
+					return;
+			}
+		}
+	}
+
+	/**
+	 * Mouse Over handler
+	 * 
+	 * @param {Event} e 
+	 */
+	_onMouseOver(e) {
+		const activeItem = e.target.closest('li');
+		if (activeItem) {
+			this.setActiveItem(activeItem);
+		}
+	}
+
+	/**
+	 * Setting active item actions
+	 * 
+	 * @param {any} item 
+	 */
+	setActiveItem(item) {
+		this.activeListItemIndex = parseInt(item.getAttribute('tabindex'), 10);
+		this._clearClasses();
+		item.classList.add('active');
+		console.log('Mouseover: ', this.activeListItemIndex);
+	}
+
+	/**
+	 * Actions with DOM for up/down keys
+	 * 
+	 * @param {Boolean} dir Direction of keys
+	 * @param {HTMLElement} item active element
+	 */
+	arrowKeyActions(dir, item) {
+		this._clearClasses();
+		item.classList.add('active');
+		this.scrollContainer(item, dir);
+	}
+
+	scrollContainer(element, dir) {
+		const list = this.usersListElement.childNodes[0];
+		const elemRect = {
+			top: element.offsetTop,
+			bottom: element.offsetTop + element.offsetHeight
+		};
+		const listRect = {
+			scrollTop: list.scrollTop,
+			height: list.offsetHeight
+
+		};
+		const inTheView = {
+			up: (listRect.height + elemRect.top < listRect.height + listRect.scrollTop),
+			down: elemRect.bottom > listRect.height
+		}
+
+		if (dir && inTheView.down) {
+			list.scrollTop = elemRect.bottom - listRect.height;
+		} else if (!dir && inTheView.up) {
+			list.scrollTop = elemRect.top;
+		}
+	}
+
+	/**
+	 * Empties classlist for all items
+	 * 
+	 */
+	_clearClasses() {
+		Array.prototype.slice.call(this.usersList.container.childNodes)
+			.filter(el => el.classList.contains('active'))
+			.forEach(el => el.classList.remove('active'));
+	}
+
+	/**
 	 * Remove selected item from the list
 	 *
 	 * @param {String} id user id
@@ -292,7 +441,7 @@ export default class DropdownController {
 	 * @returns {Promise}
 	 */
 	fetchData(value) {
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			setTimeout(
 				() => resolve(this.trie.getUserIds(value)),
 				Math.random() * 500
@@ -319,7 +468,7 @@ export default class DropdownController {
 	 *
 	 * @returns {Boolean}
 	 */
-	_usersListShown() {
+	usersListShown() {
 		return this.element.classList.contains('vk-dropdown--focused');
 	}
 }

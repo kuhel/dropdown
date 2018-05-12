@@ -8,13 +8,11 @@ export default class UsersList {
 	/**
 	 * Creates an instance of UsersList
 	 *
-	 * @param {Array} data array of user ids
 	 * @param {Function} itemClickCallback click event callback
 	 * @param {Function} getUser user info getter
 	 * @param {Object} config config actually
 	 */
 	constructor(
-		data = [],
 		itemClickCallback = () => null,
 		getUser = () => {},
 		config
@@ -77,7 +75,7 @@ export default class UsersList {
 		const target = event.target.closest(
 			'.' + this.config.classNames.userItemContainerClass
 		);
-		if (target.dataset.hasOwnProperty(id)) {
+		if (target.dataset.hasOwnProperty('id')) {
 			this.clickCb(target.dataset.id);
 		}
 	}

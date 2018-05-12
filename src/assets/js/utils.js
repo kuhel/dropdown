@@ -26,3 +26,10 @@ export const switchKeyboard = char => {
 		return DICT.KEYBOARD.RU[index.eng];
 	}
 };
+
+export const KEYS = {
+	UP: 38,
+	DOWN: 40,
+	ENTER: 27,
+	ESC: 13
+};

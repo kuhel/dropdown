@@ -20,7 +20,7 @@ export default class SelectedItems {
 		getUser = () => null,
 		config
 	) {
-		this._data = [];
+		this.innerData = [];
 		this.clickCb = itemClickCallback;
 		this.addCb = addCallBack;
 		this.getUser = getUser;
@@ -36,26 +36,26 @@ export default class SelectedItems {
 	 * Data getter
 	 */
 	get data() {
-		return this._data;
+		return this.innerData;
 	}
 
 	/**
 	 * Data Setter
 	 */
 	set data(data) {
-		this._data = [...data];
+		this.innerData = [...data];
 	}
 
 	/**
 	 * Renders selected items input
 	 */
 	render() {
-		if (this._data.length) {
+		if (this.data.length) {
 			this.container.querySelector(
 				'.' + this.config.classNames.selectContainerClass
 			);
 			this.container.addEventListener('click', e => this._onClick(e));
-			this._data.forEach((item, i) => {
+			this.data.forEach(item => {
 				const node = this._createPersonBtn(item);
 				this.container.appendChild(node);
 			});
